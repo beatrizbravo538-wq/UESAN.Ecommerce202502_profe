@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using UESAN.Ecommerce.CORE.Core.DTOs;
 using UESAN.Ecommerce.CORE.Core.Interfaces;
@@ -7,6 +8,7 @@ namespace UESAN.Ecommerce.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    //[Authorize] //protege a todos los endpoints de este controlador, tambien solo se puede hacer por roles, por ejmplo un tal roln solo pueda consumir determinados endpoints
     public class CategoryController : ControllerBase
     {
         //private readonly ICategoryRepository _categoryRepository;
@@ -18,6 +20,7 @@ namespace UESAN.Ecommerce.API.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous] //permite el acceso sin autenticacion a este endpoint en particular
         public async Task<IActionResult> GetCategories()
         {
             var categories = await _categoryService.GetAllCategories();

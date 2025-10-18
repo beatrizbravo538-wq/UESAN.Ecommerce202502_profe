@@ -19,6 +19,10 @@ builder.Services.AddTransient<IFavoriteService, FavoriteService>();
 builder.Services.AddTransient<IProductRepository, ProductRepository>();
 builder.Services.AddTransient<IProductService, ProductService>();
 
+// Register user repository and service
+builder.Services.AddTransient<IUserRepository, UserRepository>();
+builder.Services.AddTransient<IUserService, UserService>();
+
 builder.Services.AddDbContext<StoreDbContext>(
     options => options.UseSqlServer(connectionString));
 
