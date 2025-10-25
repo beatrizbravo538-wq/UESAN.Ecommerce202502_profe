@@ -9,6 +9,6 @@ namespace UESAN.Ecommerce.CORE.Core.Interfaces
         Task<UserListDTO> GetUserByEmail(string email);
         Task<IEnumerable<UserListDTO>> GetUsers();
         Task<int> SignUp(UserCreateDTO userCreateDTO);
-        Task<UserListDTO> SignIn(UserSignInDTO userSignInDTO);
+        Task<UserDTO?> SignIn(string email, string password);
     }
 }

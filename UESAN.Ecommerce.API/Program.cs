@@ -3,6 +3,7 @@ using UESAN.Ecommerce.CORE.Core.Interfaces;
 using UESAN.Ecommerce.CORE.Core.Services;
 using UESAN.Ecommerce.CORE.Infrastructure.Data;
 using UESAN.Ecommerce.CORE.Infrastructure.Repositories;
+using UESAN.Ecommerce.CORE.Infrastructure.Shared;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +23,10 @@ builder.Services.AddTransient<IProductService, ProductService>();
 // Register user repository and service
 builder.Services.AddTransient<IUserRepository, UserRepository>();
 builder.Services.AddTransient<IUserService, UserService>();
+
+//agregar shared infrastructure para usar el JWT token
+
+builder.Services.AddSharedInfrastructure(_configuration);
 
 builder.Services.AddDbContext<StoreDbContext>(
     options => options.UseSqlServer(connectionString));

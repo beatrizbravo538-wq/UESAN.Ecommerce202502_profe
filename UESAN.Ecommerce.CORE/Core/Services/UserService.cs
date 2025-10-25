@@ -12,10 +12,12 @@ namespace UESAN.Ecommerce.CORE.Core.Services
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
+        private readonly IJWTService _jwtService;   
 
-        public UserService(IUserRepository userRepository)
+        public UserService(IUserRepository userRepository, IJWTService jwtService)
         {
             _userRepository = userRepository;
+            _jwtService = jwtService;
         }
 
         public async Task<int> InsertUser(UserCreateDTO userCreateDTO)
@@ -24,13 +26,12 @@ namespace UESAN.Ecommerce.CORE.Core.Services
             {
                 FirstName = userCreateDTO.FirstName,
                 LastName = userCreateDTO.LastName,
-                DateOfBirth = userCreateDTO.DateOfBirth,
+             
                 Country = userCreateDTO.Country,
                 Address = userCreateDTO.Address,
                 Email = userCreateDTO.Email,
                 Password = userCreateDTO.Password,
-                IsActive = true,
-                Type = userCreateDTO.Type
+                IsActive = true
             };
 
             return await _userRepository.InsertUser(user);
@@ -99,13 +100,12 @@ namespace UESAN.Ecommerce.CORE.Core.Services
             {
                 FirstName = userCreateDTO.FirstName,
                 LastName = userCreateDTO.LastName,
-                DateOfBirth = userCreateDTO.DateOfBirth,
+            
                 Country = userCreateDTO.Country,
                 Address = userCreateDTO.Address,
                 Email = userCreateDTO.Email,
                 Password = userCreateDTO.Password, // in production hash this password
-                IsActive = true,
-                Type = userCreateDTO.Type ?? "user"
+                IsActive = true
             };
 
             return await _userRepository.InsertUser(user);
@@ -118,24 +118,18 @@ namespace UESAN.Ecommerce.CORE.Core.Services
             return string.Equals(storedPassword, providedPassword);
         }
 
-        public async Task<UserListDTO> SignIn(UserSignInDTO userSignInDTO)
+        public async Task<UserDTO?> SignIn(string email, string password)
         {
-            if (string.IsNullOrEmpty(userSignInDTO.Email) || string.IsNullOrEmpty(userSignInDTO.Password))
-                throw new ArgumentException("Email and Password are required");
-
-            var user = await _userRepository.GetUserByEmail(userSignInDTO.Email);
+            var user = await _userRepository.SignIn(email, password);
             if (user == null) return null;
-
-            if (!VerifyPassword(user.Password ?? string.Empty, userSignInDTO.Password)) return null;
-
-            return new UserListDTO
+            var token = _jwtService.GenerateJWToken(user);
+            return new UserDTO
             {
                 Id = user.Id,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Email = user.Email,
-                IsActive = user.IsActive,
-                Type = user.Type
+                FirstName = user.FirstName ?? string.Empty,
+                LastName = user.LastName ?? string.Empty,
+                Email = user.Email ?? string.Empty,
+                Token = token
             };
         }
     }

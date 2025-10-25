@@ -10,5 +10,7 @@ namespace UESAN.Ecommerce.CORE.Core.Interfaces
         Task<IEnumerable<User>> GetUsers();
         Task UpdateUser(User user);
         Task DeleteUser(int id);
+        Task<User?> SignIn(string email, string password);
+        Task<int> SignUp(User user);
     }
 }

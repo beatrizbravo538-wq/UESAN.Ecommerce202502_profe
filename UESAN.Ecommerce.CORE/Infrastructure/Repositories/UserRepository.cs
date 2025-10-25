@@ -21,14 +21,31 @@ namespace UESAN.Ecommerce.CORE.Infrastructure.Repositories
             return user.Id;
         }
 
-        public async Task<User?> GetUserByEmail(string email)
+        public async Task<User?> SignIn(string email, string password)
         {
-            return await _context.User.FirstOrDefaultAsync(u => u.Email == email);
+            return await _context.User
+                .Where(u => u.Email == email && u.Password == password && u.IsActive == true)
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task<int> SignUp(User user)
+        {
+            user.IsActive = true;
+            await _context.User.AddAsync(user);
+            await _context.SaveChangesAsync();
+            return user.Id;
         }
 
         public async Task<User?> GetUserById(int id)
         {
             return await _context.User.FindAsync(id);
+        }
+
+        public async Task<User?> GetUserByEmail(string email)
+        {
+            return await _context.User
+                .Where(u => u.Email == email)
+                .FirstOrDefaultAsync();
         }
 
         public async Task<IEnumerable<User>> GetUsers()
